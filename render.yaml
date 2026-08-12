@@ -1,0 +1,15 @@
+# Render Blueprint — in the Render dashboard: New → Blueprint → pick this repo.
+# Free plan note: persistent disks require a paid instance. Without the disk
+# block below, the SQLite demo data reseeds on each deploy/restart (fine for
+# showing the demo around; not fine for keeping real scores).
+services:
+  - type: web
+    name: domain-expert
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    # Uncomment on a paid instance to persist the database:
+    # disk:
+    #   name: data
+    #   mountPath: /app/data
+    #   sizeGB: 1

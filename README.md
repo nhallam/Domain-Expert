@@ -42,6 +42,14 @@ Open http://localhost:3000. The SQLite database is created and seeded on first r
 | `app/create` | Quiz builder |
 | `app/api/og/…` | OG images: quiz card + score card (1200×630) |
 
+## Deploying to a public URL
+
+The repo ships with a `Dockerfile` plus configs for two hosts. The app needs a long-lived Node process; SQLite means serverless hosts (Vercel/Netlify) won't work as-is.
+
+- **Fly.io** (persistent DB, free-tier friendly): install `flyctl`, then from the repo root run `fly launch --copy-config --yes`. The included `fly.toml` mounts a 1 GB volume at `/app/data` so scores survive restarts.
+- **Render** (one-click from the dashboard): New → Blueprint → select this repo; `render.yaml` does the rest. On the free plan there's no persistent disk, so demo data reseeds on restarts — fine for showing it around.
+- **Railway** also auto-detects the Dockerfile: New Project → Deploy from GitHub repo, then attach a volume at `/app/data`.
+
 ## Swapping in real LinkedIn (v2)
 
 - **Auth:** replace the mock provider in `lib/auth.ts` / the sign-in actions with Sign In with LinkedIn (OpenID Connect, scopes `openid profile email`). The session, User model, and every page stay as-is.
