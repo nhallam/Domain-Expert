@@ -44,7 +44,9 @@ Open http://localhost:3000. The SQLite database is created and seeded on first r
 
 ## Deploying to a public URL
 
-The repo ships with a `Dockerfile` plus configs for two hosts. The app needs a long-lived Node process; SQLite means serverless hosts (Vercel/Netlify) won't work as-is.
+The repo ships with a `Dockerfile` plus configs for two hosts. The app prefers a long-lived Node process with a disk; SQLite and serverless are an awkward pair.
+
+- **Vercel** works in *demo mode*: the database falls back to `/tmp`, which is writable but ephemeral and per-instance — data reseeds on cold starts and scores don't persist. Fine for walking someone through the loop; not for keeping a real leaderboard. (Set `DATABASE_DIR` to relocate the DB on any host.)
 
 - **Fly.io** (persistent DB, free-tier friendly): install `flyctl`, then from the repo root run `fly launch --copy-config --yes`. The included `fly.toml` mounts a 1 GB volume at `/app/data` so scores survive restarts.
 - **Render** (one-click from the dashboard): New → Blueprint → select this repo; `render.yaml` does the rest. On the free plan there's no persistent disk, so demo data reseeds on restarts — fine for showing it around.

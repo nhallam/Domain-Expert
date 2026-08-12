@@ -19,7 +19,12 @@ const globalForDb = globalThis as unknown as { __dx_db?: Database.Database };
 export function getDb(): Database.Database {
   if (globalForDb.__dx_db) return globalForDb.__dx_db;
 
-  const dataDir = path.join(process.cwd(), "data");
+  // DATABASE_DIR overrides; on Vercel the project dir is read-only, so fall
+  // back to /tmp — ephemeral per serverless instance, which is fine for demo
+  // mode (data reseeds) but means scores don't persist. Use a host with a
+  // volume (see README) for real persistence.
+  const dataDir =
+    process.env.DATABASE_DIR ?? (process.env.VERCEL ? "/tmp/domain-expert-data" : path.join(process.cwd(), "data"));
   fs.mkdirSync(dataDir, { recursive: true });
   const db = new Database(path.join(dataDir, "domain-expert.db"));
   db.pragma("journal_mode = WAL");
